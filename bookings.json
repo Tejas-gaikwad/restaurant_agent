@@ -1,11 +1,17 @@
 {
   "bookings": {
     "1": {
-      "date": "2026-07-26",
+      "date": "2026-07-31",
       "time": "22:00",
-      "party_size": 5,
-      "name": "tejas gaikwd"
+      "party_size": 2,
+      "name": "akash"
+    },
+    "2": {
+      "date": "2026-07-31",
+      "time": "22:00",
+      "party_size": 6,
+      "name": "akash"
     }
   },
-  "next_id": 2
+  "next_id": 3
 }
