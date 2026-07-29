@@ -1,0 +1,11 @@
+{
+  "bookings": {
+    "1": {
+      "date": "2026-07-26",
+      "time": "22:00",
+      "party_size": 5,
+      "name": "tejas gaikwd"
+    }
+  },
+  "next_id": 2
+}
