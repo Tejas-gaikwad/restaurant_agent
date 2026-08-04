@@ -10,6 +10,21 @@ MENU = [
     {"name": "Chicken Alfredo",  "price": 16, "tags": []},
 ]
 
+INVENTORY = {   # ingredient -> units on hand
+    "paneer_kg": 2, "salmon_kg": 3, "flour_kg": 8, "pasta_kg": 4,
+    "chicken_kg": 2, "veg_kg": 6, "cheese_kg": 3,
+}
+
+RECIPES = {     # dish -> ingredients per single portion
+    "Margherita Pizza":  {"flour_kg": 0.25, "cheese_kg": 0.15},
+    "Paneer Tikka":      {"paneer_kg": 0.2,  "veg_kg": 0.1},
+    "Vegan Buddha Bowl": {"veg_kg": 0.3,     "pasta_kg": 0.1},
+    "Grilled Salmon":    {"salmon_kg": 0.25, "veg_kg": 0.15},
+    "Chicken Alfredo":   {"chicken_kg": 0.25, "pasta_kg": 0.2, "cheese_kg": 0.1},
+}
+
+PURCHASE_ORDERS = []
+
 CAPACITY = 20   # seats available per slot
 
 
@@ -26,6 +41,8 @@ def _save():
 
 BOOKINGS, _start = _load()
 _next_id = [_start]
+
+
 
 
 def find_booking(name):
@@ -72,3 +89,30 @@ def book_table(date, time, party_size, name):
 def cancel_booking(booking_id):
     _save()
     return {"success": bool(BOOKINGS.pop(booking_id, None))}
+
+def get_bookings(date):
+    print(f"All bookings {BOOKINGS}...")
+    rows = [{"booking_id": bid, **b} for bid, b in BOOKINGS.items() if b["date"] == date]
+    total = sum(r["party_size"] for r in rows)
+    return {"date": date, "bookings": rows, "total_covers": total}
+
+def get_inventory():
+    return INVENTORY
+
+def get_recipe(dish):
+    r = RECIPES.get(dish)
+    return {"dish": dish, "ingredients": r} if r else {"error": f"No recipe for {dish}."}
+
+def create_purchase_order(items):   # items: {ingredient: qty}
+    PURCHASE_ORDERS.append(items)
+    return {"success": True, "ordered": items, "order_id": len(PURCHASE_ORDERS)}
+
+def compute_prep_and_shortfall(covers_by_dish):
+    """covers_by_dish: {dish_name: portions}. Does the exact math in Python."""
+    needed = {}
+    for dish, portions in covers_by_dish.items():
+        for ing, per_portion in RECIPES.get(dish, {}).items():
+            needed[ing] = round(needed.get(ing, 0) + per_portion * portions, 3)
+    shortfall = {ing: round(qty - INVENTORY.get(ing, 0), 3)
+                 for ing, qty in needed.items() if qty > INVENTORY.get(ing, 0)}
+    return {"needed": needed, "on_hand": INVENTORY, "shortfall": shortfall}
