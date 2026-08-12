@@ -124,3 +124,18 @@ TOOLS = [
                 "description": "Map of dish name to number of portions, e.g. {\"Paneer Tikka\": 8}"}},
             "required": ["covers_by_dish"]}}},
 ]
+
+
+RISK = {
+    "get_menu": "low",              # read-only, no side effect
+    "check_availability": "low",
+    "find_booking": "low",
+    "get_bookings": "low",
+    "get_inventory": "low",
+    "get_recipe": "low",
+    "book_table": "medium",         # writes state, but reversible
+    "modify_booking": "medium",
+    "compute_prep_and_shortfall": "low",
+    "cancel_booking": "high",       # irreversible-ish, destroys data
+    "create_purchase_order": "high", # spends money, real-world effect
+}

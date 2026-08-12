@@ -6,6 +6,8 @@ from openai import OpenAI
 from booking_store import get_menu, check_availability, book_table, modify_booking, cancel_booking, find_booking, get_bookings, get_inventory, get_recipe, create_purchase_order, compute_prep_and_shortfall
 from pydantic import BaseModel
 from typing import Optional
+from tool_specs import RISK
+
 
 load_dotenv()
 
@@ -69,7 +71,7 @@ class Agent:
             for tool_call in msg.tool_calls:
                 tool_input = json.loads(tool_call.function.arguments)
                 print(f"  → calling {tool_call.function.name}({tool_input})")   # watch it think
-                out = dispatch(tool_call.function.name, tool_input)
+                out = guarded_dispatch(tool_call.function.name, tool_input)
                 print(f"  ← {out}")
                 self.messages.append({
                     "role": "tool",
@@ -80,6 +82,28 @@ class Agent:
                 if tool_call.function.name == "book_table" and out.get("success"):
                     return out["message"]
         return "Stopped: hit max iterations."
+
+def guarded_dispatch(tool_name, tool_input, approver=None):
+   
+    tier = RISK.get(tool_name, "high")   # unknown tools default to HIGH — fail safe, not open
+    print(f"  [guarded_dispatch] {tool_name} TIER -> ({tier})")
+    if tier == "low":
+        return dispatch(tool_name, tool_input)
+
+    if tier == "medium":
+        print(f"  [audit] {tier} action: {tool_name}({tool_input})")
+        return dispatch(tool_name, tool_input)
+
+    # high risk → human-in-the-loop approval gate
+    print(f"  ⚠ HIGH-RISK action requested: {tool_name}({tool_input})")
+    ok = approver(tool_name, tool_input) if approver else _ask_terminal(tool_name, tool_input)
+    if not ok:
+        return {"approved": False, "message": f"{tool_name} was blocked by the approval gate."}
+    return dispatch(tool_name, tool_input)
+
+def _ask_terminal(tool_name, tool_input):
+    resp = input(f"    Approve {tool_name}? (y/n) ").strip().lower()
+    return resp == "y"
 
 
 def dispatch(tool_name, tool_input):
@@ -162,6 +186,7 @@ def execute_plan(plan: Plan):
         args = resolve(step.args, results)
         print(f"  [{i}] {step.tool}({args})  — {step.reason}")
         out = dispatch(step.tool, args)
+        out = guarded_dispatch(step.tool, args)  # <-- use guarded_dispatch for safety
         print(f"      ← {out}")
         results.append(out)
     return results

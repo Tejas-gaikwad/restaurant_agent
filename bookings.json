@@ -1,11 +1,29 @@
 {
   "bookings": {
     "1": {
-      "date": "2026-08-07",
+      "date": "2026-08-12",
       "time": "20:00",
-      "party_size": 6,
-      "name": "Tejas"
+      "party_size": 10,
+      "name": "GuardTest"
+    },
+    "2": {
+      "date": "2026-08-12",
+      "time": "20:00",
+      "party_size": 10,
+      "name": "GuardTest"
+    },
+    "3": {
+      "date": "2026-08-12",
+      "time": "20:00",
+      "party_size": 10,
+      "name": "GuardTest"
+    },
+    "4": {
+      "date": "2026-08-12",
+      "time": "20:00",
+      "party_size": 10,
+      "name": "GuardTest"
     }
   },
-  "next_id": 2
+  "next_id": 5
 }
