@@ -2,6 +2,7 @@ from booking_flow import BookingFlow
 from booking_store import book_table
 from datetime import date
 from llm_agent import Agent, make_plan, execute_plan
+from supervisor import Supervisor
 
 if __name__ == "__main__":
 
@@ -19,7 +20,7 @@ if __name__ == "__main__":
     # print(flow.handle("aditya, 4 people"))                 # → all 4 slots filled → books immediately
 
 
-    today = date.today().isoformat()
+    # today = date.today().isoformat()
     # book_table(today, "20:00", 8, "Akash")
     # book_table(today, "20:00", 6, "Priya")
 
@@ -29,8 +30,18 @@ if __name__ == "__main__":
     #     f"split evenly across the menu. Work out what to prep and order what we're short on."
     # ))
 
-    plan = make_plan(f"Plan tonight's prep and ordering for {today}. Assume one main per guest, even split.")
-    print(f"\nPLAN ({len(plan.steps)} steps):")
-    for s in plan.steps:
-        print(f"  - {s.tool}: {s.reason}")
-    execute_plan(plan)
+    # plan = make_plan(f"Plan tonight's prep and ordering for {today}. Assume one main per guest, even split.")
+    # print(f"\nPLAN ({len(plan.steps)} steps):")
+    # for s in plan.steps:
+    #     print(f"  - {s.tool}: {s.reason}")
+    # execute_plan(plan)
+    supervisor = Supervisor()
+    # print(supervisor.handle("book a table for 4 tomorrow at 8pm, name Tejas"))
+    # print(supervisor.handle("what vegan dishes do you have?"))
+    # print(supervisor.handle("plan tonight's prep and ordering for today"))
+    # print(supervisor.handle("hey there"))
+    # print("Result: \n", supervisor.handle("book a table for 4 tomorrow at 8pm, name Tejas, and tell me the vegan options"))
+    print(supervisor.handle("book a table for 4 tomorrow at 8 pm, name Tejas"))
+    print(supervisor.handle("change it to 6 people"))
+    # print(supervisor.handle("change it to 6 people"))
+

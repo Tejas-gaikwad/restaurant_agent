@@ -7,8 +7,6 @@ REQUIRED = {"book": ["name", "date", "time", "party_size"], "modify": ["name"], 
 
 
 class BookingFlow:
-
-
     def __init__(self):
         self.slots = {}          # accumulated across turns, in Python — not in model context
         self.intent = None
@@ -17,10 +15,10 @@ class BookingFlow:
         self.slots = {}
         self.intent = None
 
-    def handle(self, user_message):
+    def handle(self, user_message, session=None):
         print("Handling...")
         parsed = extract_intent(user_message, self.slots)
-        print("Parsed...  ", parsed)
+        print( parsed)
         new_intent = parsed.intent.value
         if self.intent is None or self.intent not in REQUIRED:
         # no active multi-turn flow → take the fresh classification
@@ -36,6 +34,10 @@ class BookingFlow:
             if val is not None:
                 self.slots[field] = val
 
+        if self.intent in ("modify", "cancel") and "name" not in self.slots:
+            if session and "last_name" in session:
+                self.slots["name"] = session["last_name"] 
+
         missing = [f for f in REQUIRED.get(self.intent, []) if f not in self.slots]
 
         if missing:
@@ -47,7 +49,11 @@ class BookingFlow:
             if not avail["available"]:
                 return avail.get("reason", "That slot isn't available.")
             result = book_table(**{k: self.slots[k] for k in REQUIRED["book"]})
+            if session is not None:
+                session["last_booking_id"] = result["booking_id"]
+                session["last_name"] = self.slots["name"]
             self.slots = {}                       # reset for next booking
+            # print("Booking result:", result)
             return result["message"]
 
         if self.intent == "modify":

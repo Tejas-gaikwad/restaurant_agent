@@ -1,0 +1,11 @@
+┌─────────────┐
+   user  ───────▶   │  SUPERVISOR │   (cheap model: classify + route only)
+                    └──────┬──────┘
+          ┌────────────────┼────────────────┐
+          ▼                ▼                 ▼
+   ┌────────────┐   ┌────────────┐    ┌────────────┐
+   │  BOOKING   │   │  KITCHEN   │    │    MENU     │
+   │   agent    │   │    agent   │    │    agent    │
+   └────────────┘   └────────────┘    └────────────┘
+   book/modify/     prep planning,     menu Q&A,
+   cancel tools     inventory tools    dietary info

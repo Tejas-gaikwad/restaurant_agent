@@ -30,9 +30,8 @@ class Agent:
 
         self.messages = [{"role": "system", "content": system}]
 
-    def chat(self, user_message):
+    def handle(self, user_message):
 
-        print("User messaged :", user_message)
 
         if user_message == "/dump":
             for m in self.messages: print(m)

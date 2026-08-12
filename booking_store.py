@@ -91,6 +91,8 @@ def cancel_booking(booking_id):
     return {"success": bool(BOOKINGS.pop(booking_id, None))}
 
 def get_bookings(date):
+    print(f"Bookings for date {date}: -> {BOOKINGS}...")
+
     print(f"All bookings {BOOKINGS}...")
     rows = [{"booking_id": bid, **b} for bid, b in BOOKINGS.items() if b["date"] == date]
     total = sum(r["party_size"] for r in rows)

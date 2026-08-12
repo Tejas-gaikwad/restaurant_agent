@@ -1,18 +1,11 @@
 {
   "bookings": {
     "1": {
-      "date": "2026-08-03",
-      "time": "20:00",
-      "party_size": 8,
-      "name": "Akash"
-    },
-    "2": {
-      "date": "2026-08-03",
+      "date": "2026-08-07",
       "time": "20:00",
       "party_size": 6,
-      "name": "Priya"
+      "name": "Tejas"
     }
-
   },
-  "next_id": 3
+  "next_id": 2
 }
